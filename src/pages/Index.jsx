@@ -335,6 +335,8 @@ const Index = () => {
             if (e.key === "Enter") {
               setInputValue("");
               inputRef.current.focus();
+            } else if (e.key === "Backspace") {
+              setInputValue((prev) => prev.slice(0, -1));
             }
           }}
           onBlur={() => {
