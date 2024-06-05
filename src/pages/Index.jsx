@@ -225,6 +225,7 @@ const Index = () => {
   const inputRef = useRef(null);
   const [fallSpeed, setFallSpeed] = useState(5);
   const [charactersOnScreen, setCharactersOnScreen] = useState([]);
+  const hrRef = useRef(null);
   const fadeOut = keyframes`
     from { opacity: 1; transform: scale(1); }
     to { opacity: 0; transform: scale(1.5); }
@@ -254,12 +255,16 @@ const Index = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setCharactersOnScreen((prev) => {
+        const hrPosition = hrRef.current.getBoundingClientRect().top;
         return prev
           .map((char) => ({
             ...char,
             top: char.top + 1,
           }))
-          .filter((char) => char.top < 100);
+          .filter((char) => {
+            const charPosition = (char.top / 100) * window.innerHeight;
+            return charPosition < hrPosition;
+          });
       });
     }, fallSpeed * 100);
 
@@ -287,7 +292,7 @@ const Index = () => {
   return (
     <Container centerContent maxW="container.md" height="100vh" display="flex" flexDirection="column" justifyContent="center" alignItems="center" position="relative">
       <VStack spacing={4} width="100%">
-        <Box as="hr" width="100%" borderColor="gray.300" />
+        <Box as="hr" width="100%" borderColor="gray.300" ref={hrRef} />
         <Input
           placeholder="Type the romaji here..."
           value={inputValue}
