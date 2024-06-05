@@ -242,7 +242,7 @@ const Index = () => {
           const newIndex = Math.floor(Math.random() * kanaList.length);
           const newCharacter = {
             index: newIndex,
-            left: `${Math.random() * 60 + 20}%`,
+            left: `${Math.random() * 80 + 10}%`,
             top: 0,
           };
           setCharactersOnScreen((prev) => [...prev, newCharacter]);
