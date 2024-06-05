@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Container, Text, VStack, Input, useToast, Box, keyframes } from "@chakra-ui/react";
+import { Container, Text, VStack, Input, useToast, Box, keyframes, Slider, SliderTrack, SliderFilledTrack, SliderThumb } from "@chakra-ui/react";
 import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 
 const hiragana = [
@@ -219,10 +219,12 @@ const katakana = [
 const kanaList = [...hiragana, ...katakana];
 
 const Index = () => {
-  const [currentKanaIndices, setCurrentKanaIndices] = useState([0, 1]);
+  const [currentKanaIndices, setCurrentKanaIndices] = useState([]);
   const [inputValue, setInputValue] = useState("");
   const [correctIndex, setCorrectIndex] = useState(null);
   const inputRef = useRef(null);
+  const [fallSpeed, setFallSpeed] = useState(5);
+  const [charactersOnScreen, setCharactersOnScreen] = useState([]);
   const fadeOut = keyframes`
     from { opacity: 1; transform: scale(1); }
     to { opacity: 0; transform: scale(1.5); }
@@ -234,12 +236,36 @@ const Index = () => {
   }, [currentKanaIndices]);
 
   useEffect(() => {
-    currentKanaIndices.forEach((index, i) => {
-      if (inputValue.trim().toLowerCase() === kanaList[index].romaji) {
-        checkAnswer(i);
-      }
-    });
-  }, [inputValue, currentKanaIndices]);
+    const interval = setInterval(
+      () => {
+        if (charactersOnScreen.length < 3) {
+          const newIndex = Math.floor(Math.random() * kanaList.length);
+          const newCharacter = {
+            index: newIndex,
+            left: `${Math.random() * 60 + 20}%`,
+            top: 0,
+          };
+          setCharactersOnScreen((prev) => [...prev, newCharacter]);
+        }
+      },
+      Math.random() * 9000 + 1000,
+    );
+
+    return () => clearInterval(interval);
+  }, [charactersOnScreen]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCharactersOnScreen((prev) =>
+        prev.map((char) => ({
+          ...char,
+          top: char.top + 1,
+        })),
+      );
+    }, fallSpeed * 100);
+
+    return () => clearInterval(interval);
+  }, [fallSpeed]);
 
   const checkAnswer = (index) => {
     if (inputValue.trim().toLowerCase() === kanaList[currentKanaIndices[index]].romaji) {
@@ -257,11 +283,18 @@ const Index = () => {
   };
 
   return (
-    <Container centerContent maxW="container.md" height="100vh" display="flex" flexDirection="column" justifyContent="center" alignItems="center">
-      <VStack spacing={4}>
-        {currentKanaIndices.map((index, i) => (
-          <Text key={i} fontSize="4xl" animation={correctIndex === i ? `${fadeOut} 1s forwards` : "none"} color={correctIndex === i ? "green.500" : "black"}>
-            {kanaList[index].char}
+    <Container centerContent maxW="container.md" height="100vh" display="flex" flexDirection="column" justifyContent="center" alignItems="center" position="relative">
+      <VStack spacing={4} width="100%">
+        <Slider defaultValue={5} min={1} max={10} onChange={(val) => setFallSpeed(val)}>
+          <SliderTrack>
+            <SliderFilledTrack />
+          </SliderTrack>
+          <SliderThumb />
+        </Slider>
+        <Box width="100%" height="2px" bg="black" />
+        {charactersOnScreen.map((char, i) => (
+          <Text key={i} fontSize="4xl" position="absolute" left={char.left} top={`${char.top}%`} animation={correctIndex === i ? `${fadeOut} 1s forwards` : "none"} color={correctIndex === i ? "green.500" : "black"}>
+            {kanaList[char.index].char}
           </Text>
         ))}
         <Box width="100%" display="flex" justifyContent="center">
