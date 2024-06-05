@@ -241,14 +241,15 @@ const Index = () => {
           let overlap;
           do {
             newLeft = `${Math.random() * 80 + 10}%`;
-            overlap = charactersOnScreen.some((char) => Math.abs(parseFloat(char.left) - parseFloat(newLeft)) < 10 || Math.abs(parseFloat(char.left) - parseFloat(newLeft)) < 30);
+            overlap = charactersOnScreen.some((char) => Math.abs(parseFloat(char.left) - parseFloat(newLeft)) < 40 || Math.abs(parseFloat(char.left) - parseFloat(newLeft)) < 30);
           } while (overlap);
 
           const newCharacter = {
             index: newIndex,
             left: newLeft,
             top: 0,
-            fontSize: `${Math.random() * 0.6 + 0.7}em`,
+            fontSize: `${(Math.random() * 0.6 + 0.7) * 3}em`,
+            fontWeight: "bold",
           };
           setCharactersOnScreen((prev) => [...prev, newCharacter]);
         }
@@ -263,24 +264,27 @@ const Index = () => {
       const interval = setInterval(() => {
         setCharactersOnScreen((prev) => {
           const hrPosition = hrRef.current.getBoundingClientRect().top;
-          return prev
-            .map((char, idx) => {
-              const charPosition = (char.top / 100) * 1000;
-              if (charPosition >= hrPosition) {
-                return null;
-              }
-              if (inputValue.trim().toLowerCase() === kanaList[char.index].romaji) {
-                setCorrectIndex(idx);
-                setTimeout(() => {
-                  setCharactersOnScreen((prev) => prev.filter((_, i) => i !== idx));
-                  setCorrectIndex(null);
-                }, 1000);
-                setInputValue("");
-                return null;
-              }
-              return { ...char, top: char.top + 40 / (fallSpeed * 1000) };
-            })
-            .filter(Boolean);
+          return (
+            prev.length <
+            (5)
+              .map((char, idx) => {
+                const charPosition = (char.top / 100) * 1000;
+                if (charPosition >= hrPosition) {
+                  return null;
+                }
+                if (inputValue.trim().toLowerCase() === kanaList[char.index].romaji) {
+                  setCorrectIndex(idx);
+                  setTimeout(() => {
+                    setCharactersOnScreen((prev) => prev.filter((_, i) => i !== idx));
+                    setCorrectIndex(null);
+                  }, 1000);
+                  setInputValue("");
+                  return null;
+                }
+                return { ...char, top: char.top + 40 / (fallSpeed * 1000) };
+              })
+              .filter(Boolean)
+          );
         });
       }, 40);
 
@@ -315,7 +319,18 @@ const Index = () => {
           <SliderThumb />
         </Slider>
         <Box as="hr" width="100%" borderColor="gray.300" ref={hrRef} />
-        <Input placeholder="Type the romaji here..." value={inputValue} onChange={(e) => setInputValue(e.target.value)} ref={inputRef} />
+        <Input
+          placeholder="Type the romaji here..."
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+          ref={inputRef}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              setInputValue("");
+              inputRef.current.focus();
+            }
+          }}
+        />
       </VStack>
       {charactersOnScreen.map((char, i) => (
         <Text key={i} fontSize={char.fontSize} position="absolute" left={char.left} top={`${char.top}%`} animation={correctIndex === i ? `${fadeOut} 1s forwards` : "none"} color={correctIndex === i ? "green.500" : "black"}>
