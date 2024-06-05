@@ -235,24 +235,27 @@ const Index = () => {
     if (gameStarted) {
       inputRef.current.focus();
       const interval = setInterval(() => {
-        if (charactersOnScreen.length < 5) {
-          const newIndex = Math.floor(Math.random() * kanaList.length);
-          let newLeft;
-          let overlap;
-          do {
-            newLeft = `${Math.random() * 80 + 10}%`;
-            overlap = charactersOnScreen.some((char) => Math.abs(parseFloat(char.left) - parseFloat(newLeft)) < 10);
-          } while (overlap);
+        setCharactersOnScreen((prev) => {
+          if (prev.length < 5) {
+            const newIndex = Math.floor(Math.random() * kanaList.length);
+            let newLeft;
+            let overlap;
+            do {
+              newLeft = `${Math.random() * 80 + 10}%`;
+              overlap = prev.some((char) => Math.abs(parseFloat(char.left) - parseFloat(newLeft)) < 10);
+            } while (overlap);
 
-          const newCharacter = {
-            index: newIndex,
-            left: newLeft,
-            top: 0,
-            fontSize: `${(Math.random() * 0.6 + 0.7) * 3}em`,
-            fontWeight: "bold",
-          };
-          setCharactersOnScreen((prev) => [...prev, newCharacter]);
-        }
+            const newCharacter = {
+              index: newIndex,
+              left: newLeft,
+              top: 0,
+              fontSize: `${(Math.random() * 0.6 + 0.7) * 3}em`,
+              fontWeight: "bold",
+            };
+            return [...prev, newCharacter];
+          }
+          return prev;
+        });
       }, fallSpeed * 1000);
 
       return () => clearInterval(interval);
@@ -287,7 +290,7 @@ const Index = () => {
 
       return () => clearInterval(interval);
     }
-  }, [gameStarted, inputValue, fallSpeed, charactersOnScreen]);
+  }, [gameStarted, inputValue, fallSpeed]);
 
   const checkAnswer = () => {
     const correctKana = kanaList[charactersOnScreen[0].index].romaji;
@@ -304,7 +307,14 @@ const Index = () => {
   return (
     <Container centerContent maxW="600px" height="1000px" display="flex" flexDirection="column" justifyContent="center" alignItems="center" position="relative">
       {!gameStarted && (
-        <Button onClick={() => setGameStarted(true)} colorScheme="teal" mb={4}>
+        <Button
+          onClick={() => {
+            setGameStarted(true);
+            inputRef.current.focus();
+          }}
+          colorScheme="teal"
+          mb={4}
+        >
           Start
         </Button>
       )}
