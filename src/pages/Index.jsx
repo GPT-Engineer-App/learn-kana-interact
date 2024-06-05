@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Container, Text, VStack, Input, Button, useToast, Box } from "@chakra-ui/react";
+import { Container, Text, VStack, Input, useToast, Box } from "@chakra-ui/react";
 import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 
 const hiragana = [
@@ -234,11 +234,6 @@ const Index = () => {
     }
   }, [inputValue, currentKanaIndex]);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    checkAnswer();
-  };
-
   const checkAnswer = () => {
     if (inputValue.trim().toLowerCase() === kanaList[currentKanaIndex].romaji) {
       toast({
@@ -251,16 +246,6 @@ const Index = () => {
       });
       setCurrentKanaIndex(Math.floor(Math.random() * kanaList.length));
       setInputValue("");
-    } else {
-      toast({
-        title: "Incorrect!",
-        description: "Try again.",
-        status: "error",
-        duration: 2000,
-        isClosable: true,
-        icon: <FaTimesCircle />,
-      });
-      setInputValue("");
     }
   };
 
@@ -268,7 +253,7 @@ const Index = () => {
     <Container centerContent maxW="container.md" height="100vh" display="flex" flexDirection="column" justifyContent="center" alignItems="center">
       <VStack spacing={4}>
         <Text fontSize="4xl">{kanaList[currentKanaIndex].char}</Text>
-        <Box as="form" onSubmit={handleSubmit} width="100%" display="flex" justifyContent="center">
+        <Box width="100%" display="flex" justifyContent="center">
           <Input
             ref={inputRef}
             value={inputValue}
@@ -283,9 +268,6 @@ const Index = () => {
             width="50%"
             textAlign="center"
           />
-          <Button type="submit" colorScheme="teal" size="lg" ml={4}>
-            Submit
-          </Button>
         </Box>
       </VStack>
     </Container>
