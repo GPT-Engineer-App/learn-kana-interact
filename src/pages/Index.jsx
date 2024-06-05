@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Container, Text, VStack, Input, useToast, Box } from "@chakra-ui/react";
+import { Container, Text, VStack, Input, useToast, Box, keyframes } from "@chakra-ui/react";
 import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 
 const hiragana = [
@@ -219,9 +219,14 @@ const katakana = [
 const kanaList = [...hiragana, ...katakana];
 
 const Index = () => {
-  const [currentKanaIndex, setCurrentKanaIndex] = useState(0);
+  const [currentKanaIndices, setCurrentKanaIndices] = useState([0, 1]);
   const [inputValue, setInputValue] = useState("");
+  const [correctIndex, setCorrectIndex] = useState(null);
   const inputRef = useRef(null);
+  const fadeOut = keyframes`
+    from { opacity: 1; transform: scale(1); }
+    to { opacity: 0; transform: scale(1.5); }
+  `;
   const toast = useToast();
 
   useEffect(() => {
@@ -229,22 +234,24 @@ const Index = () => {
   }, [currentKanaIndex]);
 
   useEffect(() => {
-    if (inputValue.trim().toLowerCase() === kanaList[currentKanaIndex].romaji) {
-      checkAnswer();
-    }
-  }, [inputValue, currentKanaIndex]);
+    currentKanaIndices.forEach((index, i) => {
+      if (inputValue.trim().toLowerCase() === kanaList[index].romaji) {
+        checkAnswer(i);
+      }
+    });
+  }, [inputValue, currentKanaIndices]);
 
-  const checkAnswer = () => {
-    if (inputValue.trim().toLowerCase() === kanaList[currentKanaIndex].romaji) {
-      toast({
-        title: "Correct!",
-        description: "You got it right!",
-        status: "success",
-        duration: 2000,
-        isClosable: true,
-        icon: <FaCheckCircle />,
-      });
-      setCurrentKanaIndex(Math.floor(Math.random() * kanaList.length));
+  const checkAnswer = (index) => {
+    if (inputValue.trim().toLowerCase() === kanaList[currentKanaIndices[index]].romaji) {
+      setCorrectIndex(index);
+      setTimeout(() => {
+        setCurrentKanaIndices((prev) => {
+          const newIndices = [...prev];
+          newIndices[index] = Math.floor(Math.random() * kanaList.length);
+          return newIndices;
+        });
+        setCorrectIndex(null);
+      }, 1000);
       setInputValue("");
     }
   };
@@ -252,16 +259,22 @@ const Index = () => {
   return (
     <Container centerContent maxW="container.md" height="100vh" display="flex" flexDirection="column" justifyContent="center" alignItems="center">
       <VStack spacing={4}>
-        <Text fontSize="4xl">{kanaList[currentKanaIndex].char}</Text>
+        {currentKanaIndices.map((index, i) => (
+          <Text key={i} fontSize="4xl" animation={correctIndex === i ? `${fadeOut} 1s forwards` : "none"} color={correctIndex === i ? "green.500" : "black"}>
+            {kanaList[index].char}
+          </Text>
+        ))}
         <Box width="100%" display="flex" justifyContent="center">
           <Input
             ref={inputRef}
             value={inputValue}
             onChange={(e) => {
               setInputValue(e.target.value);
-              if (e.target.value.trim().toLowerCase() === kanaList[currentKanaIndex].romaji) {
-                checkAnswer();
-              }
+              currentKanaIndices.forEach((index, i) => {
+                if (e.target.value.trim().toLowerCase() === kanaList[index].romaji) {
+                  checkAnswer(i);
+                }
+              });
             }}
             placeholder="Enter romaji"
             size="lg"
