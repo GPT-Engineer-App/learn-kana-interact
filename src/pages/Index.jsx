@@ -273,12 +273,14 @@ const Index = () => {
               if (charPosition >= hrPosition) {
                 return null;
               }
-              if (inputValue.trim().toLowerCase() === kanaList[char.index].romaji) {
+              if (inputValue.trim().toLowerCase() === kanaList[char.index].romaji && correctIndex === null) {
                 setCorrectIndex(idx);
-                setCharactersOnScreen((prev) => prev.filter((_, i) => i !== idx));
-                setCorrectIndex(null);
+                setTimeout(() => {
+                  setCharactersOnScreen((prev) => prev.filter((_, i) => i !== idx));
+                  setCorrectIndex(null);
+                }, 1000);
                 setInputValue("");
-                return null;
+                return { ...char, top: char.top + 40 / (fallSpeed * 1000) };
               }
               return { ...char, top: char.top + 40 / (fallSpeed * 1000) };
             })
@@ -288,7 +290,7 @@ const Index = () => {
 
       return () => clearInterval(interval);
     }
-  }, [gameStarted, inputValue, fallSpeed, charactersOnScreen]);
+  }, [gameStarted, inputValue, fallSpeed, charactersOnScreen, correctIndex]);
 
   const checkAnswer = () => {
     const correctKana = kanaList[charactersOnScreen[0].index].romaji;
