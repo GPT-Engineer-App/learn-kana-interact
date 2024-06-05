@@ -230,6 +230,10 @@ const Index = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    checkAnswer();
+  };
+
+  const checkAnswer = () => {
     if (inputValue.trim().toLowerCase() === kanaList[currentKanaIndex].romaji) {
       toast({
         title: "Correct!",
@@ -259,7 +263,20 @@ const Index = () => {
       <VStack spacing={4}>
         <Text fontSize="4xl">{kanaList[currentKanaIndex].char}</Text>
         <Box as="form" onSubmit={handleSubmit} width="100%" display="flex" justifyContent="center">
-          <Input ref={inputRef} value={inputValue} onChange={(e) => setInputValue(e.target.value)} placeholder="Enter romaji" size="lg" width="50%" textAlign="center" />
+          <Input
+            ref={inputRef}
+            value={inputValue}
+            onChange={(e) => {
+              setInputValue(e.target.value);
+              if (e.target.value.trim().toLowerCase() === kanaList[currentKanaIndex].romaji) {
+                checkAnswer();
+              }
+            }}
+            placeholder="Enter romaji"
+            size="lg"
+            width="50%"
+            textAlign="center"
+          />
           <Button type="submit" colorScheme="teal" size="lg" ml={4}>
             Submit
           </Button>
