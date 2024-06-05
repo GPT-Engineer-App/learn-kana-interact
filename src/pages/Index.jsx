@@ -242,7 +242,7 @@ const Index = () => {
             let overlap;
             do {
               newLeft = `${Math.random() * 80 + 10}%`;
-              overlap = prev.some((char) => Math.abs(parseFloat(char.left) - parseFloat(newLeft)) < 10);
+              overlap = prev.some((char) => Math.abs(parseFloat(char.left) - parseFloat(newLeft)) < 15);
             } while (overlap);
 
             const newCharacter = {
@@ -275,10 +275,8 @@ const Index = () => {
               }
               if (inputValue.trim().toLowerCase() === kanaList[char.index].romaji) {
                 setCorrectIndex(idx);
-                setTimeout(() => {
-                  setCharactersOnScreen((prev) => prev.filter((_, i) => i !== idx));
-                  setCorrectIndex(null);
-                }, 1000);
+                setCharactersOnScreen((prev) => prev.filter((_, i) => i !== idx));
+                setCorrectIndex(null);
                 setInputValue("");
                 return null;
               }
