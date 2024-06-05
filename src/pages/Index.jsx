@@ -235,10 +235,10 @@ const Index = () => {
     if (gameStarted) {
       inputRef.current.focus();
       const interval = setInterval(() => {
-        let overlap;
         if (charactersOnScreen.length < 5) {
           const newIndex = Math.floor(Math.random() * kanaList.length);
           let newLeft;
+          let overlap;
           do {
             newLeft = `${Math.random() * 80 + 10}%`;
             overlap = charactersOnScreen.some((char) => Math.abs(parseFloat(char.left) - parseFloat(newLeft)) < 10);
@@ -257,7 +257,7 @@ const Index = () => {
 
       return () => clearInterval(interval);
     }
-  }, [gameStarted, fallSpeed]);
+  }, [gameStarted, fallSpeed, charactersOnScreen]);
 
   useEffect(() => {
     if (gameStarted) {
@@ -287,7 +287,7 @@ const Index = () => {
 
       return () => clearInterval(interval);
     }
-  }, [gameStarted, inputValue, fallSpeed]);
+  }, [gameStarted, inputValue, fallSpeed, charactersOnScreen]);
 
   const checkAnswer = () => {
     const correctKana = kanaList[charactersOnScreen[0].index].romaji;
