@@ -236,32 +236,31 @@ const Index = () => {
   }, [currentKanaIndices]);
 
   useEffect(() => {
-    const interval = setInterval(
-      () => {
-        if (charactersOnScreen.length < 3) {
-          const newIndex = Math.floor(Math.random() * kanaList.length);
-          const newCharacter = {
-            index: newIndex,
-            left: `${Math.random() * 80 + 10}%`,
-            top: 0,
-          };
-          setCharactersOnScreen((prev) => [...prev, newCharacter]);
-        }
-      },
-      Math.random() * 9000 + 1000,
-    );
+    const interval = setInterval(() => {
+      if (charactersOnScreen.length < 3) {
+        const newIndex = Math.floor(Math.random() * kanaList.length);
+        const newCharacter = {
+          index: newIndex,
+          left: `${Math.random() * 80 + 10}%`,
+          top: 0,
+        };
+        setCharactersOnScreen((prev) => [...prev, newCharacter]);
+      }
+    }, 2000);
 
     return () => clearInterval(interval);
   }, [charactersOnScreen]);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setCharactersOnScreen((prev) =>
-        prev.map((char) => ({
-          ...char,
-          top: char.top + 1,
-        })),
-      );
+      setCharactersOnScreen((prev) => {
+        return prev
+          .map((char) => ({
+            ...char,
+            top: char.top + 1,
+          }))
+          .filter((char) => char.top < 100);
+      });
     }, fallSpeed * 100);
 
     return () => clearInterval(interval);
@@ -288,6 +287,7 @@ const Index = () => {
   return (
     <Container centerContent maxW="container.md" height="100vh" display="flex" flexDirection="column" justifyContent="center" alignItems="center" position="relative">
       <VStack spacing={4} width="100%">
+        <Box as="hr" width="100%" borderColor="gray.300" />
         <Input
           placeholder="Type the romaji here..."
           value={inputValue}
