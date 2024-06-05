@@ -219,7 +219,7 @@ const katakana = [
 const kanaList = [...hiragana, ...katakana];
 
 const Index = () => {
-  const [currentKanaIndices, setCurrentKanaIndices] = useState([]);
+  const [currentKanaIndices, setCurrentKanaIndices] = useState([0, 1, 2]);
   const [inputValue, setInputValue] = useState("");
   const [correctIndex, setCorrectIndex] = useState(null);
   const inputRef = useRef(null);
@@ -267,18 +267,21 @@ const Index = () => {
     return () => clearInterval(interval);
   }, [fallSpeed]);
 
-  const checkAnswer = (index) => {
-    if (inputValue.trim().toLowerCase() === kanaList[currentKanaIndices[index]].romaji) {
-      setCorrectIndex(index);
+  const checkAnswer = () => {
+    const correctKana = kanaList[charactersOnScreen[0].index].romaji;
+    if (inputValue.trim().toLowerCase() === correctKana) {
+      setCorrectIndex(0);
       setTimeout(() => {
-        setCurrentKanaIndices((prev) => {
-          const newIndices = [...prev];
-          newIndices[index] = Math.floor(Math.random() * kanaList.length);
-          return newIndices;
-        });
+        setCharactersOnScreen((prev) => prev.slice(1));
         setCorrectIndex(null);
       }, 1000);
       setInputValue("");
+      toast({
+        title: "Correct!",
+        status: "success",
+        duration: 1000,
+        isClosable: true,
+      });
     }
   };
 
@@ -286,6 +289,17 @@ const Index = () => {
     <Container centerContent maxW="container.md" height="100vh" display="flex" flexDirection="column" justifyContent="center" alignItems="center" position="relative">
       <VStack spacing={4} width="100%">
         <Box width="100%" height="2px" bg="black" />
+        <Input
+          placeholder="Type the romaji here..."
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+          onKeyPress={(e) => {
+            if (e.key === "Enter") {
+              checkAnswer();
+            }
+          }}
+          ref={inputRef}
+        />
         <Text>Speed (1-10):</Text>
         <Slider defaultValue={5} min={1} max={10} onChange={(val) => setFallSpeed(val)}>
           <SliderTrack>
@@ -293,6 +307,7 @@ const Index = () => {
           </SliderTrack>
           <SliderThumb />
         </Slider>
+        <Box width="100%" height="2px" bg="black" />
         {charactersOnScreen.map((char, i) => (
           <Text key={i} fontSize="4xl" position="absolute" left={char.left} top={`${char.top}%`} animation={correctIndex === i ? `${fadeOut} 1s forwards` : "none"} color={correctIndex === i ? "green.500" : "black"}>
             {kanaList[char.index].char}
