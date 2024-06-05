@@ -244,14 +244,16 @@ const Index = () => {
             overlap = charactersOnScreen.some((char) => Math.abs(parseFloat(char.left) - parseFloat(newLeft)) < 30);
           } while (overlap);
 
-          const newCharacter = {
-            index: newIndex,
-            left: newLeft,
-            top: 0,
-            fontSize: `${(Math.random() * 0.6 + 0.7) * 3}em`,
-            fontWeight: "bold",
-          };
-          setCharactersOnScreen((prev) => [...prev, newCharacter]);
+          if (charactersOnScreen.length < 5) {
+            const newCharacter = {
+              index: newIndex,
+              left: newLeft,
+              top: 0,
+              fontSize: `${(Math.random() * 0.6 + 0.7) * 3}em`,
+              fontWeight: "bold",
+            };
+            setCharactersOnScreen((prev) => [...prev, newCharacter]);
+          }
         }
       }, fallSpeed * 1000);
 
@@ -330,9 +332,11 @@ const Index = () => {
         />
       </VStack>
       {charactersOnScreen.map((char, i) => (
-        <Text key={i} fontSize={char.fontSize} position="absolute" left={char.left} top={`${char.top}%`} animation={correctIndex === i ? `${fadeOut} 1s forwards` : "none"} color={correctIndex === i ? "green.500" : "black"}>
-          {kanaList[char.index].char}
-        </Text>
+        <Box key={i} position="absolute" left={char.left} top={`${char.top}%`} p={2}>
+          <Text fontSize={char.fontSize} animation={correctIndex === i ? `${fadeOut} 1s forwards` : "none"} color={correctIndex === i ? "green.500" : "black"} fontWeight="bold">
+            {kanaList[char.index].char}
+          </Text>
+        </Box>
       ))}
     </Container>
   );
