@@ -32,7 +32,7 @@ const Index = () => {
         isClosable: true,
         icon: <FaCheckCircle />,
       });
-      setCurrentKanaIndex((prevIndex) => (prevIndex + 1) % kanaList.length);
+      setCurrentKanaIndex(Math.floor(Math.random() * kanaList.length));
       setInputValue("");
     } else {
       toast({
