@@ -235,21 +235,23 @@ const Index = () => {
     if (gameStarted) {
       inputRef.current.focus();
       const interval = setInterval(() => {
-        const newIndex = Math.floor(Math.random() * kanaList.length);
-        let newLeft;
-        let overlap;
-        do {
-          newLeft = `${Math.random() * 80 + 10}%`;
-          overlap = charactersOnScreen.some((char) => Math.abs(parseFloat(char.left) - parseFloat(newLeft)) < 5);
-        } while (overlap);
+        if (charactersOnScreen.length < 5) {
+          const newIndex = Math.floor(Math.random() * kanaList.length);
+          let newLeft;
+          let overlap;
+          do {
+            newLeft = `${Math.random() * 80 + 10}%`;
+            overlap = charactersOnScreen.some((char) => Math.abs(parseFloat(char.left) - parseFloat(newLeft)) < 10 || Math.abs(parseFloat(char.left) - parseFloat(newLeft)) < 30);
+          } while (overlap);
 
-        const newCharacter = {
-          index: newIndex,
-          left: newLeft,
-          top: 0,
-          fontSize: `${Math.random() * 0.6 + 0.7}em`,
-        };
-        setCharactersOnScreen((prev) => [...prev, newCharacter]);
+          const newCharacter = {
+            index: newIndex,
+            left: newLeft,
+            top: 0,
+            fontSize: `${Math.random() * 0.6 + 0.7}em`,
+          };
+          setCharactersOnScreen((prev) => [...prev, newCharacter]);
+        }
       }, fallSpeed * 1000);
 
       return () => clearInterval(interval);
