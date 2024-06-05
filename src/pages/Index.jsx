@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Container, Text, VStack, Input, Button, Box, keyframes } from "@chakra-ui/react";
+import { Container, Text, VStack, Input, Button, Box, Slider, SliderTrack, SliderFilledTrack, SliderThumb, keyframes } from "@chakra-ui/react";
 import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 
 const hiragana = [
@@ -223,6 +223,7 @@ const Index = () => {
   const [charactersOnScreen, setCharactersOnScreen] = useState([]);
   const [correctIndex, setCorrectIndex] = useState(null);
   const [gameStarted, setGameStarted] = useState(false);
+  const [fallSpeed, setFallSpeed] = useState(4);
   const inputRef = useRef(null);
   const hrRef = useRef(null);
   const fadeOut = keyframes`
@@ -241,7 +242,7 @@ const Index = () => {
           top: 0,
         };
         setCharactersOnScreen((prev) => [...prev, newCharacter]);
-      }, 4000);
+      }, fallSpeed * 1000);
 
       return () => clearInterval(interval);
     }
@@ -253,14 +254,23 @@ const Index = () => {
         setCharactersOnScreen((prev) => {
           const hrPosition = hrRef.current.getBoundingClientRect().top;
           return prev
-            .map((char) => ({
-              ...char,
-              top: char.top + 1,
-            }))
-            .filter((char) => {
+            .map((char, idx) => {
               const charPosition = (char.top / 100) * 1000;
-              return charPosition < hrPosition;
-            });
+              if (charPosition >= hrPosition) {
+                return null;
+              }
+              if (inputValue.trim().toLowerCase() === kanaList[char.index].romaji) {
+                setCorrectIndex(idx);
+                setTimeout(() => {
+                  setCharactersOnScreen((prev) => prev.filter((_, i) => i !== idx));
+                  setCorrectIndex(null);
+                }, 1000);
+                setInputValue("");
+                return null;
+              }
+              return { ...char, top: char.top + 1 };
+            })
+            .filter(Boolean);
         });
       }, 40);
 
@@ -287,19 +297,15 @@ const Index = () => {
           Start
         </Button>
       )}
-      <VStack spacing={4} width="100%" position="absolute" bottom={4}>
+      <VStack spacing={4} width="100%" position="absolute" bottom={4} alignItems="center">
+        <Slider aria-label="speed-slider" defaultValue={4} min={1} max={10} width="80%" onChange={(val) => setFallSpeed(val)}>
+          <SliderTrack>
+            <SliderFilledTrack />
+          </SliderTrack>
+          <SliderThumb />
+        </Slider>
         <Box as="hr" width="100%" borderColor="gray.300" ref={hrRef} />
-        <Input
-          placeholder="Type the romaji here..."
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          onKeyPress={(e) => {
-            if (e.key === "Enter") {
-              checkAnswer();
-            }
-          }}
-          ref={inputRef}
-        />
+        <Input placeholder="Type the romaji here..." value={inputValue} onChange={(e) => setInputValue(e.target.value)} ref={inputRef} />
       </VStack>
       {charactersOnScreen.map((char, i) => (
         <Text key={i} fontSize="4xl" position="absolute" left={char.left} top={`${char.top}%`} animation={correctIndex === i ? `${fadeOut} 1s forwards` : "none"} color={correctIndex === i ? "green.500" : "black"}>
