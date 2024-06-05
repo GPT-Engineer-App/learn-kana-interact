@@ -241,7 +241,7 @@ const Index = () => {
           let overlap;
           do {
             newLeft = `${Math.random() * 80 + 10}%`;
-            overlap = charactersOnScreen.some((char) => Math.abs(parseFloat(char.left) - parseFloat(newLeft)) < 40 || Math.abs(parseFloat(char.left) - parseFloat(newLeft)) < 30);
+            overlap = charactersOnScreen.some((char) => Math.abs(parseFloat(char.left) - parseFloat(newLeft)) < 40);
           } while (overlap);
 
           const newCharacter = {
@@ -264,27 +264,24 @@ const Index = () => {
       const interval = setInterval(() => {
         setCharactersOnScreen((prev) => {
           const hrPosition = hrRef.current.getBoundingClientRect().top;
-          return (
-            prev.length <
-            (5)
-              .map((char, idx) => {
-                const charPosition = (char.top / 100) * 1000;
-                if (charPosition >= hrPosition) {
-                  return null;
-                }
-                if (inputValue.trim().toLowerCase() === kanaList[char.index].romaji) {
-                  setCorrectIndex(idx);
-                  setTimeout(() => {
-                    setCharactersOnScreen((prev) => prev.filter((_, i) => i !== idx));
-                    setCorrectIndex(null);
-                  }, 1000);
-                  setInputValue("");
-                  return null;
-                }
-                return { ...char, top: char.top + 40 / (fallSpeed * 1000) };
-              })
-              .filter(Boolean)
-          );
+          return prev
+            .map((char, idx) => {
+              const charPosition = (char.top / 100) * 1000;
+              if (charPosition >= hrPosition) {
+                return null;
+              }
+              if (inputValue.trim().toLowerCase() === kanaList[char.index].romaji) {
+                setCorrectIndex(idx);
+                setTimeout(() => {
+                  setCharactersOnScreen((prev) => prev.filter((_, i) => i !== idx));
+                  setCorrectIndex(null);
+                }, 1000);
+                setInputValue("");
+                return null;
+              }
+              return { ...char, top: char.top + 40 / (fallSpeed * 1000) };
+            })
+            .filter(Boolean);
         });
       }, 40);
 
