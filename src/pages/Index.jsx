@@ -231,7 +231,7 @@ const Index = () => {
 
   useEffect(() => {
     inputRef.current.focus();
-  }, [currentKanaIndex]);
+  }, [currentKanaIndices]);
 
   useEffect(() => {
     currentKanaIndices.forEach((index, i) => {
