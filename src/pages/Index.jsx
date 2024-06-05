@@ -241,19 +241,17 @@ const Index = () => {
           let newLeft;
           do {
             newLeft = `${Math.random() * 80 + 10}%`;
-            overlap = charactersOnScreen.some((char) => Math.abs(parseFloat(char.left) - parseFloat(newLeft)) < 30);
+            overlap = charactersOnScreen.some((char) => Math.abs(parseFloat(char.left) - parseFloat(newLeft)) < 10);
           } while (overlap);
 
-          if (charactersOnScreen.length < 5) {
-            const newCharacter = {
-              index: newIndex,
-              left: newLeft,
-              top: 0,
-              fontSize: `${(Math.random() * 0.6 + 0.7) * 3}em`,
-              fontWeight: "bold",
-            };
-            setCharactersOnScreen((prev) => [...prev, newCharacter]);
-          }
+          const newCharacter = {
+            index: newIndex,
+            left: newLeft,
+            top: 0,
+            fontSize: `${(Math.random() * 0.6 + 0.7) * 3}em`,
+            fontWeight: "bold",
+          };
+          setCharactersOnScreen((prev) => [...prev, newCharacter]);
         }
       }, fallSpeed * 1000);
 
