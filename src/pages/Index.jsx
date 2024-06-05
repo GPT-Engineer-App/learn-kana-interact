@@ -288,7 +288,6 @@ const Index = () => {
   return (
     <Container centerContent maxW="container.md" height="100vh" display="flex" flexDirection="column" justifyContent="center" alignItems="center" position="relative">
       <VStack spacing={4} width="100%">
-        <Box width="100%" height="2px" bg="black" />
         <Input
           placeholder="Type the romaji here..."
           value={inputValue}
@@ -307,7 +306,7 @@ const Index = () => {
           </SliderTrack>
           <SliderThumb />
         </Slider>
-        <Box width="100%" height="2px" bg="black" />
+
         {charactersOnScreen.map((char, i) => (
           <Text key={i} fontSize="4xl" position="absolute" left={char.left} top={`${char.top}%`} animation={correctIndex === i ? `${fadeOut} 1s forwards` : "none"} color={correctIndex === i ? "green.500" : "black"}>
             {kanaList[char.index].char}
