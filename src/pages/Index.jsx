@@ -236,10 +236,18 @@ const Index = () => {
       inputRef.current.focus();
       const interval = setInterval(() => {
         const newIndex = Math.floor(Math.random() * kanaList.length);
+        let newLeft;
+        let overlap;
+        do {
+          newLeft = `${Math.random() * 80 + 10}%`;
+          overlap = charactersOnScreen.some((char) => Math.abs(parseFloat(char.left) - parseFloat(newLeft)) < 5);
+        } while (overlap);
+
         const newCharacter = {
           index: newIndex,
-          left: `${Math.random() * 80 + 10}%`,
+          left: newLeft,
           top: 0,
+          fontSize: `${Math.random() * 0.6 + 0.7}em`,
         };
         setCharactersOnScreen((prev) => [...prev, newCharacter]);
       }, fallSpeed * 1000);
@@ -308,7 +316,7 @@ const Index = () => {
         <Input placeholder="Type the romaji here..." value={inputValue} onChange={(e) => setInputValue(e.target.value)} ref={inputRef} />
       </VStack>
       {charactersOnScreen.map((char, i) => (
-        <Text key={i} fontSize="4xl" position="absolute" left={char.left} top={`${char.top}%`} animation={correctIndex === i ? `${fadeOut} 1s forwards` : "none"} color={correctIndex === i ? "green.500" : "black"}>
+        <Text key={i} fontSize={char.fontSize} position="absolute" left={char.left} top={`${char.top}%`} animation={correctIndex === i ? `${fadeOut} 1s forwards` : "none"} color={correctIndex === i ? "green.500" : "black"}>
           {kanaList[char.index].char}
         </Text>
       ))}
