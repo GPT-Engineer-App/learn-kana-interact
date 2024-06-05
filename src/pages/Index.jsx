@@ -228,6 +228,12 @@ const Index = () => {
     inputRef.current.focus();
   }, [currentKanaIndex]);
 
+  useEffect(() => {
+    if (inputValue.trim().toLowerCase() === kanaList[currentKanaIndex].romaji) {
+      checkAnswer();
+    }
+  }, [inputValue, currentKanaIndex]);
+
   const handleSubmit = (e) => {
     e.preventDefault();
     checkAnswer();
