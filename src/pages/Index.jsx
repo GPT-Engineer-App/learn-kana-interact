@@ -254,13 +254,13 @@ const Index = () => {
             };
             return [...prev, newCharacter];
           }
-          return prev.map((char) => ({ ...char, top: char.top + 1 }));
+          return prev.map((char) => ({ ...char, top: char.top + fallSpeed }));
         });
       }, 1000);
 
       return () => clearInterval(interval);
     }
-  }, [gameStarted]);
+  }, [gameStarted, fallSpeed]);
 
   useEffect(() => {
     if (gameStarted) {
@@ -280,9 +280,9 @@ const Index = () => {
                   setCorrectIndex(null);
                 }, 1000);
                 setInputValue("");
-                return { ...char, top: char.top + 1 };
+                return { ...char, top: char.top + fallSpeed };
               }
-              return { ...char, top: char.top + 1 };
+              return { ...char, top: char.top + fallSpeed };
             })
             .filter(Boolean);
         });
@@ -290,7 +290,7 @@ const Index = () => {
 
       return () => clearInterval(interval);
     }
-  }, [gameStarted, inputValue, correctIndex]);
+  }, [gameStarted, inputValue, correctIndex, fallSpeed]);
 
   const checkAnswer = () => {
     const correctKana = kanaList[charactersOnScreen[0].index].romaji;
