@@ -254,7 +254,7 @@ const Index = () => {
             };
             return [...prev, newCharacter];
           }
-          return prev;
+          return prev.map((char) => ({ ...char, top: char.top + 1 }));
         });
       }, fallSpeed * 1000);
 
@@ -280,9 +280,9 @@ const Index = () => {
                   setCorrectIndex(null);
                 }, 1000);
                 setInputValue("");
-                return { ...char, top: char.top + 40 / (fallSpeed * 1000) };
+                return { ...char, top: char.top + 1 };
               }
-              return { ...char, top: char.top + 40 / (fallSpeed * 1000) };
+              return { ...char, top: char.top + 1 };
             })
             .filter(Boolean);
         });
