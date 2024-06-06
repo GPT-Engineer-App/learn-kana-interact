@@ -292,8 +292,8 @@ const Index = () => {
     if (inputValue.trim().toLowerCase() === correctKana) {
       setCorrectIndex(0);
       setCharactersOnScreen((prev) => prev.slice(1));
-      setCorrectIndex(null);
       setInputValue("");
+      setCorrectIndex(null);
     }
   };
 
@@ -326,7 +326,7 @@ const Index = () => {
           ref={inputRef}
           onKeyDown={(e) => {
             if (e.key === "Enter") {
-              setInputValue("");
+              checkAnswer();
               inputRef.current.focus();
             } else if (e.key === "Backspace") {
               setInputValue((prev) => prev.slice(0, -1));
