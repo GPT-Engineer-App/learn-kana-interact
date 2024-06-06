@@ -223,7 +223,7 @@ const Index = () => {
   const [charactersOnScreen, setCharactersOnScreen] = useState([]);
   const [correctIndex, setCorrectIndex] = useState(null);
   const [gameStarted, setGameStarted] = useState(false);
-  const [fallSpeed, setFallSpeed] = useState(4);
+  const [fallSpeed, setFallSpeed] = useState(2.67);
   const inputRef = useRef(null);
   const hrRef = useRef(null);
   const fadeOut = keyframes`
@@ -275,12 +275,9 @@ const Index = () => {
               }
               if (inputValue.trim().toLowerCase() === kanaList[char.index].romaji && correctIndex === null) {
                 setCorrectIndex(idx);
-                setTimeout(() => {
-                  setCharactersOnScreen((prev) => prev.filter((_, i) => i !== idx));
-                  setCorrectIndex(null);
-                }, 1000);
+                setCharactersOnScreen((prev) => prev.filter((_, i) => i !== idx));
+                setCorrectIndex(null);
                 setInputValue("");
-                return { ...char, top: char.top + fallSpeed };
               }
               return { ...char, top: char.top + fallSpeed };
             })
@@ -296,10 +293,8 @@ const Index = () => {
     const correctKana = kanaList[charactersOnScreen[0].index].romaji;
     if (inputValue.trim().toLowerCase() === correctKana) {
       setCorrectIndex(0);
-      setTimeout(() => {
-        setCharactersOnScreen((prev) => prev.slice(1));
-        setCorrectIndex(null);
-      }, 1000);
+      setCharactersOnScreen((prev) => prev.slice(1));
+      setCorrectIndex(null);
       setInputValue("");
     }
   };
@@ -319,7 +314,7 @@ const Index = () => {
         </Button>
       )}
       <VStack spacing={4} width="100%" position="absolute" bottom={4} alignItems="center">
-        <Slider aria-label="speed-slider" defaultValue={4} min={1} max={10} width="80%" onChange={(val) => setFallSpeed(val)}>
+        <Slider aria-label="speed-slider" defaultValue={2.67} min={1} max={10} width="80%" onChange={(val) => setFallSpeed(val)}>
           <SliderTrack>
             <SliderFilledTrack />
           </SliderTrack>
