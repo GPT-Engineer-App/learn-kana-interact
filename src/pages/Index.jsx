@@ -260,7 +260,7 @@ const Index = () => {
 
       return () => clearInterval(interval);
     }
-  }, [gameStarted, fallSpeed]);
+  }, [gameStarted, fallSpeed, setCharactersOnScreen]);
 
   useEffect(() => {
     if (gameStarted) {
@@ -290,7 +290,7 @@ const Index = () => {
 
       return () => clearInterval(interval);
     }
-  }, [gameStarted, inputValue, fallSpeed, charactersOnScreen, correctIndex]);
+  }, [gameStarted, inputValue, fallSpeed, correctIndex, setCharactersOnScreen]);
 
   const checkAnswer = () => {
     const correctKana = kanaList[charactersOnScreen[0].index].romaji;
