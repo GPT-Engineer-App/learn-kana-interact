@@ -223,7 +223,7 @@ const Index = () => {
   const [charactersOnScreen, setCharactersOnScreen] = useState([]);
   const [correctIndex, setCorrectIndex] = useState(null);
   const [gameStarted, setGameStarted] = useState(false);
-  const [fallSpeed, setFallSpeed] = useState(2.67);
+  const [fallSpeed, setFallSpeed] = useState(1.78);
   const inputRef = useRef(null);
   const hrRef = useRef(null);
   const fadeOut = keyframes`
@@ -254,7 +254,7 @@ const Index = () => {
             };
             return [...prev, newCharacter];
           }
-          return prev.map((char) => ({ ...char, top: char.top + fallSpeed }));
+          return prev.map((char) => ({ ...char, top: char.top + fallSpeed })).filter((char) => char.top < 100);
         });
       }, 1000);
 
@@ -270,14 +270,12 @@ const Index = () => {
           return prev
             .map((char, idx) => {
               const charPosition = (char.top / 100) * 1000;
-              if (charPosition >= hrPosition) {
+              if (charPosition >= hrPosition || (inputValue.trim().toLowerCase() === kanaList[char.index].romaji && correctIndex === null)) {
+                if (inputValue.trim().toLowerCase() === kanaList[char.index].romaji && correctIndex === null) {
+                  setCorrectIndex(idx);
+                  setInputValue("");
+                }
                 return null;
-              }
-              if (inputValue.trim().toLowerCase() === kanaList[char.index].romaji && correctIndex === null) {
-                setCorrectIndex(idx);
-                setCharactersOnScreen((prev) => prev.filter((_, i) => i !== idx));
-                setCorrectIndex(null);
-                setInputValue("");
               }
               return { ...char, top: char.top + fallSpeed };
             })
